@@ -11,14 +11,14 @@
 - [X] Create tools for visualizing spectrograms 
 - [ ] Create tools for converting spectrograms back to audio files, also using `librosa`
 - [ ] Determine what exactly a model should take as input and provide as output
-    - SpectrogramMatrix -> SpectrogramMatrix representing the noise mask? 
-    - SpectrogramMatrix -> SpectrogramMatrix representing the clean audio?
+    - `SpectrogramMatrix` -> `SpectrogramMatrix` representing the noise mask? 
+    - `SpectrogramMatrix` -> `SpectrogramMatrix` representing the clean audio?
 
 
 ## Documentation and Standards
 
 ### .gitignore
-Add any datasets to your .gitignore! They're simply too large to package with any code.
+Add any datasets to your `.gitignore` file! They're usually too large to package with any code that people are downloading and versioning.
 
 ### Types
 > I'm using PyLint + type hinting to enforce some static typing and to make types visible. I'd *highly* recommend Beartype, too. - Spandan 
