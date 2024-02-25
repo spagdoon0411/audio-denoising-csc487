@@ -15,7 +15,10 @@
     - SpectrogramMatrix -> SpectrogramMatrix representing the clean audio?
 
 
-## Documentation
+## Documentation and Standards
+
+### .gitignore
+Add any datasets to your .gitignore! They're simply too large to package with any code.
 
 ### Types
 > I'm using PyLint + type hinting to enforce some static typing and to make types visible. I'd *highly* recommend Beartype, too. - Spandan 
