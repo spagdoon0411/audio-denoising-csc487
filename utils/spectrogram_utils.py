@@ -49,13 +49,15 @@ class SpectUtils:
         fig.colorbar(mappable=img, ax=ax, format="%+2.0f dB")
         return fig, ax
 
-s = SpectUtils()
-audionp: AudioVector = s.load_into_numpy(path="./data/flickr_audio/wavs/667626_18933d713e_0.wav" , sample_rate=64000.0)
-spec: SpectrogramMatrix = s.decibel_spectrogram_from_numpy_audio(vec=audionp)
+# Example code for displaying an intensity spectrogram (replace EXAMPLE_PATH)
 
-print(spec.shape)
+# s = SpectUtils()
+# audionp: AudioVector = s.load_into_numpy(path="EXAMPLE_PATH" , sample_rate=64000.0)
+# spec: SpectrogramMatrix = s.decibel_spectrogram_from_numpy_audio(vec=audionp)
 
-fig : Figure
-ax : Axes
-fig, ax = s.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
-fig.savefig(fname="examplefromfunc")
+# print(spec.shape)
+
+# fig : Figure
+# ax : Axes
+# fig, ax = s.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
+# fig.savefig(fname="examplefromfunc")
