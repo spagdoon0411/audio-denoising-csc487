@@ -1,36 +1,35 @@
-from re import A
-from librosa import load, stft, display, amplitude_to_db
+from librosa import load
 import librosa
-import matplotlib
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import numpy as np
-import nptyping as npt
-from nptyping import NDArray, Shape, Float
-from typing import Any
 import matplotlib.pyplot as plt
-from beartype import beartype
+import soundfile as sf
+import jaxtyping as jt
 
-
-AudioVector = NDArray[Shape["*"], Float]
-SpectrogramMatrix = NDArray[Shape["*, *"], Float]
+AudioVector = jt.Float[np.ndarray, "timesteps"]
+SpectrogramMatrix = jt.Float[np.ndarray, "frequency timesteps"]
 
 class SpectUtils:
+
+    def __init__(self, sampling_rate):
+        self.sampling_rate: int = sampling_rate
+
     # Loads a single audio file at the path into a floating-point Numpy "time series" vector, sampling at the provided
     # rate (samples per second)
-    def load_into_numpy(self, path : str, sample_rate : float) -> AudioVector:
-        audio_arr : NDArray[Shape["*"], npt.Float] 
+    def load_into_numpy(self, path : str) -> AudioVector:
+        audio_arr : AudioVector
         returned_sample_rate : float
-        audio_arr, returned_sample_rate = load(path=path, sr=sample_rate)
+        audio_arr, returned_sample_rate = load(path=path, sr=self.sampling_rate)
 
-        print(f"Successfully loaded the audio file from {path} into a NumPy array, sampling at {sample_rate} samples/second")
+        print(f"Successfully loaded the audio file from {path} into a NumPy array, sampling at {self.sampling_rate} samples/second")
 
         return audio_arr
     
     # Takes an AudioArray and returns an amplitude-frequency vs. time SpectrogramMatrix
     def spectrogram_from_numpy_audio(self, vec : AudioVector) -> SpectrogramMatrix:
-        stft_vec: SpectrogramMatrix = stft(vec)
-        return np.abs(stft_vec)
+        stft_vec: SpectrogramMatrix = librosa.feature.melspectrogram(y=vec, sr=self.sampling_rate)
+        return np.abs(stft_vec) 
     
     # Takes an AudioArray and returns an intensity-frequency vs. time SpectrogramMatrix (where intensity is
     # measured in dB)
@@ -48,11 +47,41 @@ class SpectUtils:
         ax.set_title(label=title)
         fig.colorbar(mappable=img, ax=ax, format="%+2.0f dB")
         return fig, ax
+    
+    # Takes an intensity (decibel) spectrogram and converts it to an audio vector, converting it to
+    # an amplitude spectrogram first.
+    def numpy_audio_from_decibel_spectrogram(self, spect : SpectrogramMatrix) -> AudioVector:
+        amplitude_spect : SpectrogramMatrix = librosa.db_to_amplitude(S_db=spect)
+        # TODO: does np.abs belong around this?
+        return np.abs(librosa.feature.inverse.mel_to_audio(M=amplitude_spect, sr=self.sampling_rate))
+    
+    # Stores numpy audio as a playable wav file
+    def save_numpy_as_wav(self, vec : AudioVector, path : str) -> None:
+        # TODO: this write method has a subtype argument. What should I use?
+        sf.write(file=path, data=vec, samplerate=self.sampling_rate)
 
-# Example code for displaying an intensity spectrogram (replace EXAMPLE_PATH)
+    # Composes intermediate functions above to obtain spectrograms from audio files. Optional image saving
+    # (not done if image_name is None).
+    def audio_to_spectrogram(self, path : str, image_directory : str, image_name : None | str = None) -> SpectrogramMatrix:
+        spec : SpectrogramMatrix = self.decibel_spectrogram_from_numpy_audio(vec=self.load_into_numpy(path=path))
+        if(image_name != None):
+            if(image_directory == None):
+                image_directory = "."
 
-# s = SpectUtils()
-# audionp: AudioVector = s.load_into_numpy(path="EXAMPLE_PATH" , sample_rate=64000.0)
+            fig : Figure
+            ax : Axes
+            fig, ax = self.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
+            # TODO: does this save to desired path?
+            fig.savefig(fname=path + "/" + image_name)
+        return spec
+    
+    # Composes intermediate functions above to obtain audio files from spectrograms.
+    def spectrogram_to_audio(self, directory : str, name : str, spect : SpectrogramMatrix) -> None:
+        self.save_numpy_as_wav(vec=self.numpy_audio_from_decibel_spectrogram(spect=spect), path=directory + "/" + name)
+    
+
+# s = SpectUtils(sampling_rate=64000)
+# audionp: AudioVector = s.load_into_numpy(path="./data/flickr_audio/wavs/667626_18933d713e_0.wav")
 # spec: SpectrogramMatrix = s.decibel_spectrogram_from_numpy_audio(vec=audionp)
 
 # print(spec.shape)
@@ -60,4 +89,11 @@ class SpectUtils:
 # fig : Figure
 # ax : Axes
 # fig, ax = s.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
-# fig.savefig(fname="examplefromfunc")
+# fig.savefig(fname="examplefromfunc2")
+
+# # TODO: how does the sound of this audio vector compare to the old one? Why are there negative values??
+# reconstructed_vec: AudioVector = s.numpy_audio_from_decibel_spectrogram(spect=spec)
+# print(reconstructed_vec.shape)
+# print(audionp.shape)
+
+# s.save_numpy_as_wav(vec=reconstructed_vec, path="./test.wav")
