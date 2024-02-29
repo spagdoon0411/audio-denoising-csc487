@@ -10,6 +10,7 @@ import jaxtyping as jt
 AudioVector = jt.Float[np.ndarray, "timesteps"]
 SpectrogramMatrix = jt.Float[np.ndarray, "frequency timesteps"]
 
+# Provides functions useful for working with audio files and their spectrograms
 class SpectUtils:
 
     def __init__(self, sampling_rate):
@@ -78,7 +79,6 @@ class SpectUtils:
     # Composes intermediate functions above to obtain audio files from spectrograms.
     def spectrogram_to_audio(self, directory : str, name : str, spect : SpectrogramMatrix) -> None:
         self.save_numpy_as_wav(vec=self.numpy_audio_from_decibel_spectrogram(spect=spect), path=directory + "/" + name)
-    
 
 # s = SpectUtils(sampling_rate=64000)
 # audionp: AudioVector = s.load_into_numpy(path="./data/flickr_audio/wavs/667626_18933d713e_0.wav")
