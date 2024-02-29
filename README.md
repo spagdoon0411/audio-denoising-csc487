@@ -32,12 +32,12 @@ Any new models should go into the models directory. Add a description, related r
 ### Types
 > I'm using PyLint + type hinting to enforce some static typing and to make types visible. Jaxtyping provides type annotations on NumPy and Tensorflow objects. - Spandan 
 
-> Do note that [Beartype's annotations seem to have issues with NumPy (at least, I don't understand how they interact)](https://github.com/beartype/beartype/issues/334), so you may have to forego type hints on functions involving NumPy types. - Spandan 
+> Do note that [Beartype's annotations seem to have issues with NumPy's typing package (at least, I don't understand how they interact)](https://github.com/beartype/beartype/issues/334). Jaxtyping is therefore more ideal. - Spandan 
 
 We're dealing with NumPy arrays during preprocessing, etc. Specifically, time series audio vectors and spectrograms resulting from short-time Fourier transforms are defined as the following:
 
 ```python3 
-AudioVector = NDArray[Shape["*"], Float]
-SpectrogramMatrix = NDArray[Shape["*, *"], Float]
+AudioVector = jt.Float[np.ndarray, "timesteps"]
+SpectrogramMatrix = jt.Float[np.ndarray, "frequency timesteps"]
 ```
 
