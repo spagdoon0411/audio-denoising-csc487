@@ -1,7 +1,8 @@
 from tensorflow.keras.layers import Input, Conv2D, Dropout, BatchNormalization, ReLU, MaxPooling2D, Conv2DTranspose, concatenate
 
-class OurUnet:
-    # Takes a model specification dictionary that matches the Unet form.
+class OurUNet:
+    # Takes a model specification dictionary that matches the UNet form (see model_spec.py for 
+    # example)
     def __init__(self, modelspec : dict):
 
         self.model_spec = modelspec
