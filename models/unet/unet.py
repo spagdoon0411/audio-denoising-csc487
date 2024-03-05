@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Input, Conv2D, Dropout, BatchNormalization, ReLU, MaxPooling2D, Conv2DTranspose, concatenate
+from keras.api._v2.keras.layers import Input, Conv2D, Dropout, BatchNormalization, ReLU, MaxPooling2D, Conv2DTranspose, concatenate
 
 class OurUNet:
     # Takes a model specification dictionary that matches the UNet form (see model_spec.py for 
@@ -34,7 +34,7 @@ class OurUNet:
         # Ascend the "U": produce upsampling layers which also take corresponding
         # downsampling layers' convolutional ouputs
         for downsample_conv_layer, upsample_spec in zip(self.second_conv_layers, modelspec["upsampling"]):
-            last_layer = make_upsampling_layer(input_layer = last_layer,
+            last_layer = self.make_upsampling_layer(input_layer = last_layer,
                                                downsample_conv_layer = downsample_conv_layer,
                                                upsample_spec = upsample_spec)
 
@@ -47,7 +47,7 @@ class OurUNet:
     # to the second convolutional layer and a reference to the final pooling
     # layer (to be given as an argument to the next layer--downsampling or
     # valley). Also takes an input layer.
-    def make_downsampling_layer(input_layer, downsample_spec : dict):
+    def make_downsampling_layer(self, input_layer, downsample_spec : dict):
         conv1spec = downsample_spec["conv1"]
         dropoutspec = downsample_spec["dropout"]
         conv2spec = downsample_spec["conv2"]
@@ -80,7 +80,7 @@ class OurUNet:
     # Takes a specification for the "valley" layer (the bottommost UNet layer)
     # and creates it, using the provided input layer and returning the last layer
     # for the caller to feed into future layers.
-    def make_valley_layer(input_layer, valley_spec : dict):
+    def make_valley_layer(self, input_layer, valley_spec : dict):
         conv1spec = valley_spec["conv1"]
         dropoutspec = valley_spec["dropout"]
         conv2spec = valley_spec["conv2"]
@@ -95,7 +95,7 @@ class OurUNet:
 
         relu = ReLU()(norm)
 
-        dropout = Dropout(rate = dropoutspec["rate"])
+        dropout = Dropout(rate = dropoutspec["rate"])(relu)
 
         conv2 = Conv2D(filters = conv2spec["filters"],
                        kernel_size = conv2spec["kernel_size"],
@@ -107,13 +107,13 @@ class OurUNet:
     
     # Takes a specification for an upsampling layer and creates it, using the provided
     # input layer and the provided convolutional layer.
-    def make_upsampling_layer(input_layer, downsample_conv_layer, upsample_spec : dict):
+    def make_upsampling_layer(self, input_layer, downsample_conv_layer, upsample_spec : dict):
         convtspec = upsample_spec["convt"]
 
         convt = Conv2DTranspose(filters = convtspec["filters"],
                                 kernel_size = convtspec["kernel_size"],
                                 strides = convtspec["strides"],
-                                padding = convtspec["padding"])
+                                padding = convtspec["padding"])(input_layer)
 
         concat = concatenate([convt, downsample_conv_layer])
 
