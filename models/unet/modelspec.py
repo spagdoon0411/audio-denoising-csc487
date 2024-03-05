@@ -143,6 +143,11 @@ model_spec = {
                 "padding" : "same"
             }
         }
+    },
+    "output" : {
+        "num_classes" : 2,
+        "kernel_size" : (1, 1),
+        "activation" : "sigmoid"
     }
 }
 print(json.dumps(model_spec,

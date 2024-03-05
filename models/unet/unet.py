@@ -4,44 +4,55 @@ class OurUNet:
     # Takes a model specification dictionary that matches the UNet form (see model_spec.py for 
     # example)
     def __init__(self, modelspec : dict):
-
+        # Save model specification dictionary
         self.model_spec = modelspec
+        
+        # The input layer should accept images of variable size. The way to do this in Keras
+        # is to set dimensions of the shape to None.
+        self.inputlayer = Input(shape=(None, None))
 
-        self.inputlayer = Input()
+        # The most recent layer produced was the input layer. This reference is here for convenience
+        # (just like linked list references). Generally, this model IS built just like a linked
+        # list.
+        last_layer = self.inputlayer
 
         # Stores convolutional layers whose outputs will be used as future layer
-        # inputs.
+        # inputs. These are the references that will be "passed across the U" so that filters
+        # resulting from convolutional layers during the descent of the U can be used as inputs
+        # to U-ascent convolutional layers (via keras.layers.concatenate).
         self.second_conv_layers = []
-        
-        # The most recent layer produced was the input layer
-        last_layer = self.inputlayer
-        
+         
         # Descend the "U": produce downsampling layers
         for downsample_spec in modelspec["downsampling"]:
+            # The relevant references needed from a downsampling block are the second convolutional layer (to allow filters to be
+            # passed across the U) and the final layer in the block (the pooling layer)
             second_conv_layer, pooling_layer = self.make_downsampling_layer(input_layer = last_layer,
                                                                             downsample_spec = downsample_spec)
+
             # Save the second convolutional layer from the downsampling layer just created;
             # it feeds into later upsampling layers.
             self.second_conv_layers.append(second_conv_layer)
 
-            # The last layer created was the pooling layer.
+            # The last layer created (the one whose outputs will feed directly into the next layer
+            # in the U itself) was the pooling layer.
             last_layer = pooling_layer
 
-        # Create the layer at the "bottom" of the "U"
+        # Create the layer at the bottom of the U
         valley = self.make_valley_layer(last_layer, modelspec["valley"])
         last_layer = valley
 
-        # Ascend the "U": produce upsampling layers which also take corresponding
-        # downsampling layers' convolutional ouputs
+        # Ascend the U: produce upsampling layers which take filters from the previous convolutional layer and filters from
+        # corresponding convolutional layers in the U's descent. 
         for downsample_conv_layer, upsample_spec in zip(self.second_conv_layers, modelspec["upsampling"]):
+            # The important reference to keep here is just the final layer of the new upsampling layer, to feed into
+            # the next upsampling layer.
             last_layer = self.make_upsampling_layer(input_layer = last_layer,
                                                downsample_conv_layer = downsample_conv_layer,
                                                upsample_spec = upsample_spec)
-
-        # Once upsampling is completed, the model's work is done. The last upsampling layer
-        # (specifically, the last layer within the last set of upsampling layers) IS this 
-        # model's output layer.
-        self.outputlayer = last_layer
+       
+        # Create the final output layer, feeding in the last upsampling layer as input.
+        self.outputlayer = self.make_output_layer(input_layer=last_layer,
+                                                  output_spec=modelspec["output"])
     
     # Takes a specification for a downsampling layer and returns a reference
     # to the second convolutional layer and a reference to the final pooling
@@ -122,4 +133,12 @@ class OurUNet:
         relu = ReLU()(norm)
 
         return relu
+
+    # Produces a final convolutional output layer, using the provided input layer.
+    def make_output_layer(self, input_layer, output_spec):
+        # The output layer is a single convolutional layer.
+        return Conv2D(filters=output_spec["num_classes"],
+                      kernel_size=output_spec["kernel_size"],
+                      activation=output_spec["sigmoid"])(input_layer)
+        
 
