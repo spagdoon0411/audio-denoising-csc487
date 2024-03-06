@@ -21,10 +21,6 @@ class AudioData:
         self.clean_vectors, self.clean_names = self.files_to_vectors(clean_audio_path, clean_audio_dir)
         self.noisy_vectors, self.noisy_names = self.files_to_vectors(noisy_audio_path, noisy_audio_dir)
 
-        print("Converting vectors to spectrograms...")
-        self.clean_spectrograms = self.vectors_to_spectrograms(self.clean_vectors)
-        self.noisy_spectrograms = self.vectors_to_spectrograms(self.noisy_vectors)
-
         print("Done wrapping dataset!")
 
     # Takes the clean and noisy audio paths and ensures they're (TODO: compatible) directories
@@ -78,4 +74,5 @@ class AudioData:
     def vectors_to_spectrograms(self, vectors : list[AudioVector]) -> list[SpectrogramMatrix]:
         # TODO: will fn_output_signature accept SpectrogramMatrix?
         return [self.spectutils.spectrogram_from_numpy_audio(vec) for vec in vectors]
- 
+
+
