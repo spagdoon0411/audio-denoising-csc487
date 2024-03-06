@@ -1,7 +1,8 @@
 from keras.api._v2.keras.layers import Input, Conv2D, Dropout, BatchNormalization, ReLU, MaxPooling2D, Conv2DTranspose, concatenate
+from keras.api._v2.keras import Model
 
-class OurUNet:
-    # Takes a model specification dictionary that matches the UNet form (see model_spec.py for 
+class OurUNet(Model):
+    # Takes a model specification dictionary that matches the UNet form (see training/model_spec.py for 
     # example)
     def __init__(self, modelspec : dict):
         # Save model specification dictionary
