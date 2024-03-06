@@ -20,16 +20,16 @@ test_save_path = "data/unettest/test"
 testset = tf.data.Dataset.load(test_save_path).batch(batch_size = 1, drop_remainder=True)
 trainset = tf.data.Dataset.load(test_save_path).batch(batch_size = 1, drop_remainder=True)
 
-for data, label in testset.take(1):
-    print("Data: ", data)
-    print()
-    print("Label: ", label)
-    print()
-
-for data, label in trainset.take(1):
-    print("Data: ", data)
-    print()
-    print("Label: ", label)
-    print()
+#for data, label in testset.take(1):
+#    print("Data: ", data)
+#    print()
+#    print("Label: ", label)
+#    print()
+#
+#for data, label in trainset.take(1):
+#    print("Data: ", data)
+#    print()
+#    print("Label: ", label)
+#    print()
 
 unet.fit(trainset, validation_data=testset, batch_size=16, epochs=25, callbacks=callbacks)
