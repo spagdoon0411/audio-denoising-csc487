@@ -1,16 +1,17 @@
 from keras.api._v2.keras.layers import Input, Conv2D, Dropout, BatchNormalization, ReLU, MaxPooling2D, Conv2DTranspose, concatenate
 from keras.api._v2.keras import Model
 
-class OurUNet(Model):
+class OurUNet():
     # Takes a model specification dictionary that matches the UNet form (see training/model_spec.py for 
     # example)
-    def __init__(self, modelspec : dict):
+    def build_model(self, modelspec : dict) -> Model:
+        super().__init__()
         # Save model specification dictionary
         self.model_spec = modelspec
         
         # The input layer should accept images of variable size. The way to do this in Keras
-        # is to set dimensions of the shape to None.
-        self.inputlayer = Input(shape=(None, None))
+        # is to set dimensions of the shape to None. 
+        self.inputlayer = Input(shape=(None, None, 3))
 
         # The most recent layer produced was the input layer. This reference is here for convenience
         # (just like linked list references). Generally, this model IS built just like a linked
@@ -24,7 +25,7 @@ class OurUNet(Model):
         self.second_conv_layers = []
          
         # Descend the "U": produce downsampling layers
-        for downsample_spec in modelspec["downsampling"]:
+        for downsample_spec in modelspec["downsampling"].values():
             # The relevant references needed from a downsampling block are the second convolutional layer (to allow filters to be
             # passed across the U) and the final layer in the block (the pooling layer)
             second_conv_layer, pooling_layer = self.make_downsampling_layer(input_layer = last_layer,
@@ -42,9 +43,14 @@ class OurUNet(Model):
         valley = self.make_valley_layer(last_layer, modelspec["valley"])
         last_layer = valley
 
+        # Layers are concatenated in the upsampling layers in the reverse order relative
+        # to how they were created (i.e., in stack order). Doing this odd reverse here makes later iteration 
+        # easier.
+        self.second_conv_layers.reverse()
+
         # Ascend the U: produce upsampling layers which take filters from the previous convolutional layer and filters from
         # corresponding convolutional layers in the U's descent. 
-        for downsample_conv_layer, upsample_spec in zip(self.second_conv_layers, modelspec["upsampling"]):
+        for downsample_conv_layer, upsample_spec in zip(self.second_conv_layers, modelspec["upsampling"].values()):
             # The important reference to keep here is just the final layer of the new upsampling layer, to feed into
             # the next upsampling layer.
             last_layer = self.make_upsampling_layer(input_layer = last_layer,
@@ -54,16 +60,18 @@ class OurUNet(Model):
         # Create the final output layer, feeding in the last upsampling layer as input.
         self.outputlayer = self.make_output_layer(input_layer=last_layer,
                                                   output_spec=modelspec["output"])
-    
+
+        return Model(inputs = [self.inputlayer], outputs = [self.outputlayer])
+
     # Takes a specification for a downsampling layer and returns a reference
     # to the second convolutional layer and a reference to the final pooling
     # layer (to be given as an argument to the next layer--downsampling or
     # valley). Also takes an input layer.
     def make_downsampling_layer(self, input_layer, downsample_spec : dict):
-        conv1spec = downsample_spec["conv1"]
-        dropoutspec = downsample_spec["dropout"]
-        conv2spec = downsample_spec["conv2"]
-        poolspec = downsample_spec["max_pool"]
+        conv1spec : dict = downsample_spec["conv1"]
+        dropoutspec : dict = downsample_spec["dropout"]
+        conv2spec : dict = downsample_spec["conv2"]
+        poolspec : dict = downsample_spec["max_pool"]
 
         conv1 = Conv2D(filters = conv1spec["filters"],
                        kernel_size = conv1spec["kernel_size"],
@@ -140,6 +148,6 @@ class OurUNet(Model):
         # The output layer is a single convolutional layer.
         return Conv2D(filters=output_spec["num_classes"],
                       kernel_size=output_spec["kernel_size"],
-                      activation=output_spec["sigmoid"])(input_layer)
+                      activation=output_spec["activation"])(input_layer)
         
 
