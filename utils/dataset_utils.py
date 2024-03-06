@@ -12,14 +12,20 @@ class AudioData:
     def __init__(self, clean_audio_path : str, noisy_audio_path : str, sampling_rate : int):
         self.spectutils : SpectUtils = SpectUtils(sampling_rate)
 
+        print("Validating directories...")
         clean_audio_dir : bytes
         noisy_audio_dir : bytes
         clean_audio_dir, noisy_audio_dir = self.validate_directories(clean_audio_path, noisy_audio_path)
 
-        # For storing the names of files that this class wraps around. Useful for error
-        # messages and later lookup by the user.
+        print("Loading files as vectors...")
         self.clean_vectors, self.clean_names = self.files_to_vectors(clean_audio_path, clean_audio_dir)
         self.noisy_vectors, self.noisy_names = self.files_to_vectors(noisy_audio_path, noisy_audio_dir)
+
+        print("Converting vectors to spectrograms...")
+        self.clean_spectrograms = self.vectors_to_spectrograms(self.clean_vectors)
+        self.noisy_spectrograms = self.vectors_to_spectrograms(self.noisy_vectors)
+
+        print("Done wrapping dataset!")
 
     # Takes the clean and noisy audio paths and ensures they're (TODO: compatible) directories
     # of audio files
@@ -72,3 +78,5 @@ class AudioData:
     def vectors_to_spectrograms(self, vectors : list[AudioVector]) -> list[SpectrogramMatrix]:
         # TODO: will fn_output_signature accept SpectrogramMatrix?
         return [self.spectutils.spectrogram_from_numpy_audio(vec) for vec in vectors]
+
+    # 
