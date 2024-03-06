@@ -1,10 +1,6 @@
-from os.path import isdir
 import tensorflow as tf
 import os
-import jaxtyping as jt
-from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
 from utils.spectrogram_utils import SpectUtils, AudioVector, SpectrogramMatrix
-from typing import Any
 
 ALLOWED_EXTS : list[str] = [".wav"]
 
@@ -51,8 +47,8 @@ class AudioData:
 
         return True
 
-    # Maps a directory of audio files to a RaggedTensor of AudioVectors
-    def files_to_vectors(self, dir_path : str, dir : bytes) -> jt.Float[RaggedTensor, "number_of_files"]:
+    # Maps a directory of audio files to a list of AudioVectors
+    def files_to_vectors(self, dir_path : str, dir : bytes) -> tuple[list[AudioVector], list[str]]:
         # Create a list of AudioVectors to add to as files get visited
         audiovecs : list[AudioVector] = []
 
@@ -69,16 +65,10 @@ class AudioData:
 
                 # Record file name in the order it was visited
                 names.append(str(fileentry.name))
-        
-        # Convert the list of AudioVectors to a RaggedTensor
-        astensor : Any = tf.ragged.stack(audiovecs)
-        if(type(astensor) != RaggedTensor):
-            return astensor
-        else:
-            # TODO: hopefully this is not reached. Tensorflow's types are a mess.
-            raise Exception("Tensorflow decided not to return a RaggedTensor.")
 
-    # Takes a RaggedTensor of AudioVectors and converts it to a RaggedTensor of SpectrogramMatrix objects
-    def vectors_to_spectrograms(self, vectors : RaggedTensor) -> jt.Float[RaggedTensor, "..."]: 
+        return audiovecs, names
+
+    # Takes a list of AudioVectors and converts it to a list of SpectrogramMatrix objects
+    def vectors_to_spectrograms(self, vectors : list[AudioVector]) -> list[SpectrogramMatrix]:
         # TODO: will fn_output_signature accept SpectrogramMatrix?
-        return tf.map_fn(self.spectutils.spectrogram_from_numpy_audio, vectors, fn_output_signature=SpectrogramMatrix)
+        return [self.spectutils.spectrogram_from_numpy_audio(vec) for vec in vectors]
