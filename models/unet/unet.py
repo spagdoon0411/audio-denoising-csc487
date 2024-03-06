@@ -11,7 +11,7 @@ class OurUNet():
         
         # The input layer should accept images of variable size. The way to do this in Keras
         # is to set dimensions of the shape to None. 
-        self.inputlayer = Input(shape=(None, None, 3))
+        self.inputlayer = Input(shape=(None, None, 3), batch_size=None)
 
         # The most recent layer produced was the input layer. This reference is here for convenience
         # (just like linked list references). Generally, this model IS built just like a linked

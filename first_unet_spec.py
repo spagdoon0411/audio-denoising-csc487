@@ -100,7 +100,7 @@ model_spec = {
             "padding" : "same"
         },
         "dropout" : {
-            "rate" : "0.3"
+            "rate" : 0.3
         },
         "conv2" : {
             "filters" : 256,
@@ -145,7 +145,7 @@ model_spec = {
         }
     },
     "output" : {
-        "num_classes" : 2,
+        "num_classes" : 1,
         "kernel_size" : (1, 1),
         "activation" : "sigmoid"
     }
