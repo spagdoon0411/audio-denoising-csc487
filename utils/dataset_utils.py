@@ -78,5 +78,4 @@ class AudioData:
     def vectors_to_spectrograms(self, vectors : list[AudioVector]) -> list[SpectrogramMatrix]:
         # TODO: will fn_output_signature accept SpectrogramMatrix?
         return [self.spectutils.spectrogram_from_numpy_audio(vec) for vec in vectors]
-
-    # 
+ 
