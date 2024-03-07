@@ -9,8 +9,8 @@ ALLOWED_EXTS : list[str] = [".wav"]
 # as a wrapper around two files that provides a multi-typed interface to the data.
 class AudioData:
 
-    def __init__(self, clean_audio_path : str, noisy_audio_path : str, sampling_rate : int):
-        self.spectutils : SpectUtils = SpectUtils(sampling_rate)
+    def __init__(self, clean_audio_path : str, noisy_audio_path : str, sampling_rate : int, hop_length : int):
+        self.spectutils : SpectUtils = SpectUtils(sampling_rate=sampling_rate, hop_length=hop_length)
 
         print("Validating directories...")
         clean_audio_dir : bytes
@@ -63,7 +63,7 @@ class AudioData:
             if(self.file_extension_is_valid(str(fileentry.name))):
                 # Convert file to AudioVector (Tensor) if it's valid and aggregate with others
                 vector : AudioVector = self.spectutils.load_into_numpy(os.path.join(dir_path, str(fileentry.name)))
-                audiovecs.append(tf.convert_to_tensor(vector))
+                audiovecs.append(vector)
 
                 # Record file name in the order it was visited
                 names.append(str(fileentry.name))
