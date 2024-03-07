@@ -86,7 +86,7 @@ class SpectUtils:
         return spec
     
     # Composes intermediate functions above to obtain audio files from spectrograms.
-    def spectrogram_to_audio(self, directory : str, name : str, spect : SpectrogramMatrix) -> None:
+    def db_spectrogram_to_audio(self, directory : str, name : str, spect : SpectrogramMatrix) -> None:
         self.save_numpy_as_wav(vec=self.numpy_audio_from_db_spectrogram(spect=spect), path=directory + "/" + name)
 
     # Takes a vector of clean audio, a vector of noise, and a noise level (0 to 100%, expressed as ratio) and 
