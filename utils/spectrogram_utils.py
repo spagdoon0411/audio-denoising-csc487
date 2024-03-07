@@ -6,9 +6,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import soundfile as sf
 import jaxtyping as jt
+from random import randrange 
 
 AudioVector = jt.Float[np.ndarray, "timesteps"]
 SpectrogramMatrix = jt.Float[np.ndarray, "frequency timesteps"]
+
+DEFAULT_NOISE_LEVEL = 0.25
 
 # Provides functions useful for working with audio files and their spectrograms
 class SpectUtils:
@@ -23,7 +26,7 @@ class SpectUtils:
         returned_sample_rate : float
         audio_arr, returned_sample_rate = load(path=path, sr=self.sampling_rate)
 
-        print(f"Successfully loaded the audio file from {path} into a NumPy array, sampling at {self.sampling_rate} samples/second")
+        print(f"Successfully loaded the audio file from {path} into a NumPy array, sampling at {returned_sample_rate} samples/second")
 
         return audio_arr
     
@@ -70,8 +73,8 @@ class SpectUtils:
                 image_directory = "."
 
             fig : Figure
-            ax : Axes
-            fig, ax = self.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
+            _ : Axes
+            fig, _ = self.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
             # TODO: does this save to desired path?
             fig.savefig(fname=path + "/" + image_name)
         return spec
@@ -80,18 +83,67 @@ class SpectUtils:
     def spectrogram_to_audio(self, directory : str, name : str, spect : SpectrogramMatrix) -> None:
         self.save_numpy_as_wav(vec=self.numpy_audio_from_decibel_spectrogram(spect=spect), path=directory + "/" + name)
 
-# s = SpectUtils(sampling_rate=64000)
-# audionp: AudioVector = s.load_into_numpy(path="./data/flickr_audio/wavs/667626_18933d713e_0.wav")
-# spec: SpectrogramMatrix = s.decibel_spectrogram_from_numpy_audio(vec=audionp)
+    # Takes a vector of clean audio, a vector of noise, and a noise level (0 to 100%, expressed as ratio) and 
+    # combines both. Optional randomstate. 
+    def clean_noise_mixer(self, cleanvector : AudioVector, noisevector : AudioVector, noise_level : float = DEFAULT_NOISE_LEVEL):
+        sizedif : int = cleanvector.shape[0] - noisevector.shape[0]
 
-# print(spec.shape)
+        # TODO: inclusive bounds?
+        displacement : int = randrange(0, abs(sizedif) + 1)
+        print(displacement)
 
-# fig : Figure
-# ax : Axes
-# fig, ax = s.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
-# fig.savefig(fname="examplefromfunc2")
+        # Case 1: noise vectors have more components than clean audio vectors
+        if(sizedif < 0):
+            # Trim the first 'displacement' components from the noise vector and the last 'abs(sizedif) - displacement' components.
+            # Note that abs(sizedif) = -sizedif when sizedif < 0. 
+            noisevector = noisevector[displacement : noisevector.shape[0] - (- sizedif - displacement)]
 
-# # TODO: how does the sound of this audio vector compare to the old one? Why are there negative values??
+            # The resulting vector has:
+            # 
+            # size(noise) - displacement - (abs(sizedif) - displacement)
+            # size(noise) - displacement - abs(sizedif) + displacement
+            # size(noise) - abs(sizedif) 
+            # size(noise) - (size(noise) - size(clean))
+            # size(noise) - size(noise) + size(clean)
+            # size(clean) 
+            #
+            # ...components
+
+            mixedvector = noise_level * noisevector + (1 - noise_level) * cleanvector
+
+        # Case 2: noise vectors have fewer components than clean audio vectors
+        else:
+            # Prepend 'displacement' zeros and append abs(sizedif) - displacement zeros to the clean audio vector
+            noisevector = np.zeros((displacement, )) + noisevector + np.zeros(sizedif - displacement)
+
+            # The resulting vector has:
+            # 
+            # size(noise) + displacement + abs(sizedif) - displacement
+            # size(noise) + abs(sizedif)
+            # size(noise) + sizedif
+            # size(noise) + size(clean) - size(noise)
+            # size(clean)
+            # 
+            # ... components
+            
+            mixedvector = noise_level * noisevector + (1 - noise_level) * cleanvector
+
+        return mixedvector
+
+s = SpectUtils(sampling_rate=64000)
+
+# NOTE: this should be called from the root directory of the project (i.e., the one that CONTAINS data)
+audionp: AudioVector = s.load_into_numpy(path="./data/flickr_audio/wavs/667626_18933d713e_0.wav")
+spec: SpectrogramMatrix = s.decibel_spectrogram_from_numpy_audio(vec=audionp)
+
+print(spec.shape)
+
+fig : Figure
+ax : Axes
+fig, ax = s.display_intensity_spectrogram(spec=spec, title="Example Spectrogram")
+fig.savefig(fname="examplefromfunc2")
+
+# TODO: how does the sound of this audio vector compare to the old one? Why are there negative values??
 # reconstructed_vec: AudioVector = s.numpy_audio_from_decibel_spectrogram(spect=spec)
 # print(reconstructed_vec.shape)
 # print(audionp.shape)
