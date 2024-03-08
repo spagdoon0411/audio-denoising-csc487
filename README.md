@@ -16,8 +16,8 @@
     - [X] Write a function that takes a clean AudioVector and a noise AudioVector and performs a linear combination according to a provided noise ratio (between 0 and 1)
     - [X] Write a function that takes a directory of clean .wav files and pure noise .wav files and generates a Tensorflow Dataset object where each member is a tuple: the first tuple member is a noisy AudioVector (created using the function above) and the second tuple member is the clean AudioVector.
     - [X] Write a function that maps the AudioVector to SpectrogramMatrix conversion over the whole dataset aforementioned.
-    - [ ] Save the Dataset resulting from the process above to a file (Tensorflow stores file fragments in a directory when you save a dataset with .save. .load just takes this directory of fragments.)
-    - [ ] Write a final function that maps a directory of clean .wav files and a directory of pure noise .wav files to a tuple of Datasets (one training and one test), then stores both datsets in directories with Tensorflow's .save function.
+    - [X] Save the Dataset resulting from the process above to a file (Tensorflow stores file fragments in a directory when you save a dataset with .save. .load just takes this directory of fragments.)
+    - [X] Write a final function that maps a directory of clean .wav files and a directory of pure noise .wav files to a tuple of Datasets (one training and one test), then stores both datsets in directories with Tensorflow's .save function.
         - Noise ratio to use for each sample
         - The train-test split ratio
         - The name of the directory to save the testing set at
