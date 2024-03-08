@@ -38,6 +38,7 @@ Add any datasets to your `.gitignore` file! They're usually too large to package
 ```
 /data/*
 ```
+...along with locations you expect \__pycache__ files to show up.
 
 ### File Organization
 Any new models should go into the models directory. Add a description, related research, and your name to the `model_descriptions.md` file. All models should be defined as a class, ideally a TensorFlow [Model](https://www.tensorflow.org/guide/keras/making_new_layers_and_models_via_subclassing) class (or a descendent).
