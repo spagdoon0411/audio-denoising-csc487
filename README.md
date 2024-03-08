@@ -23,6 +23,7 @@
         - The name of the directory to save the testing set at
         - The name of the directory to save the training set at
         - A path to a directory in which the user stores their data
+- [ ] Find alternative (possibly lighter) models to train. Explore RNNs.
 - [ ] Try training the UNet model with the spectrogram datasets resulting from the process in the previous task
 - [ ] Adjust UNet model as necessary to get it to train
 - [ ] Do some ad hoc tuning to get reasonable loss metrics
