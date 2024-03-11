@@ -2,22 +2,16 @@ from models.unet.unet import OurUNet
 from models.unet.test_unet_spec import model_spec
 import tensorflow as tf
 from utils.spectrogram_utils import SpectUtils
+from data_paths import data_paths 
 
-test_data = tf.data.Dataset.load("/Volumes/baseqi1tb/ms_dataset_spects/test")
-train_data = tf.data.Dataset.load("/Volumes/baseqi1tb/ms_dataset_spects/train")
-for thing1, thing2 in train_data.take(10): # type: ignore
-    print("mixed shape: ", thing1.shape)
-    print("clean shape: ", thing2.shape)
+# Obtain references to spectrogram datasets
+train_data = tf.data.Dataset.load(data_paths["spectrograms"]["train"])
+test_data = tf.data.Dataset.load(data_paths["spectrograms"]["test"])
 
-for thing1, thing2 in test_data.take(10): # type: ignore
-    print("mixed shape: ", thing1.shape)
-    print("clean shape: ", thing2.shape)
+spectutils = SpectUtils(sampling_rate=sample_rate, hop_length=hop_length)
 
-
-spectutils = SpectUtils(sampling_rate=16000, hop_length=256)
-
-test_vecs = tf.data.Dataset.load("/Volumes/baseqi1tb/ms_dataset_vectors/test")
-train_vecs = tf.data.Dataset.load("/Volumes/baseqi1tb/ms_dataset_vectors/train")
+test_vecs = tf.data.Dataset.load(data_paths["vectors"]["test"])
+train_vecs = tf.data.Dataset.load(data_paths["vectors"]["train"])
 
 for mixedvec, cleanvec in train_vecs.take(1):
     spectutils.save_numpy_as_wav(mixedvec, "./example_mixed.wav")
