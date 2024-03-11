@@ -3,7 +3,6 @@ from keras.api._v2.keras.layers import (BatchNormalization, Conv2D,
                                         Conv2DTranspose, Dropout, Input,
                                         MaxPooling2D, ReLU, concatenate)
 
-
 class OurUNet:
     # Takes a model specification dictionary that matches the UNet 
     # form (see training/model_spec.py for example)
