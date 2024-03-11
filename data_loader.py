@@ -3,7 +3,7 @@ from utils.dataset_utils import AudioData
 import tensorflow as tf
 import sys
 import os
-from data_paths import data_paths
+from data_paths import data_paths, data_config
 
 # Options
 sample_rate = 16000
@@ -17,10 +17,10 @@ data = AudioData(clean_audio_path=data_paths["clean"]["train"],
                  clean_audio_test_path=data_paths["clean"]["test"],
                  noisy_audio_path=data_paths["noise"]["train"],
                  noisy_audio_test_path=data_paths["noise"]["test"],
-                 sampling_rate=sample_rate,
-                 hop_length=hop_length,
-                 noise_level=noise_level,
-                 clean_vec_repeats=clean_vec_repeats)
+                 sampling_rate=data_config["sample_rate"],
+                 hop_length=data_config["hop_length"],
+                 noise_level=data_config["noise_level"],
+                 clean_vec_repeats=data_config["clean_vec_repeats"])
 
 vec_path = data_paths["vectors"]
 print(f"Saving vector Dataset objects in folder {vec_path}")
@@ -30,9 +30,9 @@ data.clean_mixed_vectors_test_dataset.save(path=data_paths["vectors"]["test"])
 def tensor_spectrogram_from_tensor_audio(tens):
     return tf.signal.stft(
         signals=tens,
-        frame_length=hop_length * 4,
-        frame_step=hop_length,
-        fft_length=hop_length * 4,
+        frame_length=data_config["frame_length"],
+        frame_step=data_config["hop_length"],
+        fft_length=data_config["fft_length"],
         window_fn=tf.signal.hann_window,
     )
 
