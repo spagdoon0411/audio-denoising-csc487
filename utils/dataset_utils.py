@@ -2,10 +2,9 @@ import os
 import random
 
 import tensorflow as tf
-from spectrogram_utils import AudioVector, SpectUtils
+from utils.spectrogram_utils import AudioVector, SpectUtils
 
 ALLOWED_EXTS: list[str] = [".wav"]
-
 
 # Provides functions for translating directories of audio files to data in formats
 # that can be used for training models (namely, Dataset objects). Treated
