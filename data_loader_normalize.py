@@ -33,7 +33,6 @@ def tensor_spectrogram_from_tensor_audio(tens):
         window_fn=tf.signal.hann_window,
     )
 
-notify_boolean = True
 
 def power_to_db(S, amin=1e-16, top_db=80.0):
     """Convert a power-spectrogram (magnitude squared) to decibel (dB) units.
@@ -46,9 +45,6 @@ def power_to_db(S, amin=1e-16, top_db=80.0):
     if(not USING_DB):
         return S
     
-    if(notify_boolean):
-        print("Using dB spectrograms!")
-        notify_boolean = False
 
     def _tf_log10(x):
         numerator = tf.math.log(x)
@@ -105,3 +101,7 @@ test_spects.save(path=data_paths["spectrograms"]["test"])
 
 print("Done processing data!")
 
+# For determining whether vectors are in correct mixed, clean orientation
+for vec1, vec2 in data.clean_mixed_vectors_train_dataset.take(1):
+    data.spectutils.save_numpy_as_wav(vec1, "./first_example.wav")
+    data.spectutils.save_numpy_as_wav(vec2, "./second_example.wav")
