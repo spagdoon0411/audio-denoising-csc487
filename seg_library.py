@@ -1,11 +1,13 @@
-import segmentation_models.segmentation_models as sm
+import os
+os.environ["SM_FRAMEWORK"] = "tf.keras"
+
+import segmentation_models as sm
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
 from keras.layers import Input, Conv2D
 from keras.models import Model
 from data_paths import data_paths
-
 
 base_model = sm.Unet()
 base_model = sm.Unet(backbone_name='resnet101', encoder_weights='imagenet')

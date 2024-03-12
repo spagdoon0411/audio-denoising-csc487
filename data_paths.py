@@ -4,7 +4,7 @@ data_config = {
         "data_folder_path" : "./data",
         "folder_name" : "MS-SNSD",
         "sample_rate" : 16000,
-        "hop_length" : 512,
+        "hop_length" : 256,
         "noise_level" : 0.1,
         "frame_length" : 512 * 4,
         "fft_length" : 512 * 4,
