@@ -5,7 +5,7 @@ import sys
 import os
 from data_paths import data_paths, data_config
 
-USING_DB = False
+USING_DB = True
 
 # Util object for data preprocessing
 data = AudioData(clean_audio_path=data_paths["clean"]["train"],
