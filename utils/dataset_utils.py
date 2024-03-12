@@ -20,11 +20,13 @@ class AudioData:
         sampling_rate: int,
         hop_length: int,
         noise_level: float,
+        frame_length: int,
+        fft_length: int,
         clean_vec_repeats: int = 1,
     ):
 
         self.spectutils: SpectUtils = SpectUtils(
-            sampling_rate=sampling_rate, hop_length=hop_length
+            sampling_rate=sampling_rate, hop_length=hop_length, frame_length=frame_length, fft_length=fft_length, 
         )
 
         print("Validating directories...")
