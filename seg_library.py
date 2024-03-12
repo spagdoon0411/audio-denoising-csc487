@@ -1,4 +1,4 @@
-import segmentation_models as sm
+import segmentation_models.segmentation_models as sm
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
