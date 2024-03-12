@@ -3,6 +3,8 @@ from keras.api._v2.keras.layers import (BatchNormalization, Conv2D,
                                         Conv2DTranspose, Dropout, Input,
                                         MaxPooling2D, ReLU, concatenate)
 
+import tensorflow as tf
+
 class OurUNet:
     # Takes a model specification dictionary that matches the UNet 
     # form (see training/model_spec.py for example)
@@ -153,6 +155,7 @@ class OurUNet:
     def make_upsampling_layer(
         self, input_layer, downsample_conv_layer, upsample_spec: dict
     ):
+
         convtspec = upsample_spec["convt"]
 
         convt = Conv2DTranspose(
@@ -162,7 +165,12 @@ class OurUNet:
             padding=convtspec["padding"],
         )(input_layer)
 
-        concat = concatenate([convt, downsample_conv_layer])
+        resized_downsample_conv_layer = tf.image.resize(images = downsample_conv_layer,
+                                        size = tf.shape(convt),
+                                        method=tf.image.ResizeMethod.BILINEAR,
+                                        preserve_aspect_ratio=False)
+
+        concat = concatenate([convt, resized_downsample_conv_layer])
 
         norm = BatchNormalization()(concat)
 
