@@ -166,9 +166,9 @@ class OurUNet:
         )(input_layer)
 
         resized_downsample_conv_layer = tf.image.resize(images = downsample_conv_layer,
-                                        size = tf.shape(convt),
-                                        method=tf.image.ResizeMethod.BILINEAR,
-                                        preserve_aspect_ratio=False)
+                                                        size = tf.shape(convt)[1:3],
+                                                        method=tf.image.ResizeMethod.BILINEAR, 
+                                                        preserve_aspect_ratio=False)
 
         concat = concatenate([convt, resized_downsample_conv_layer])
 
