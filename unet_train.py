@@ -10,12 +10,12 @@ from data_loader_normalize import data
 spectutils = data.spectutils
 
 # Obtain references to spectrogram datasets
-train_data = tf.data.Dataset.load(data_paths["spectrograms"]["train"])
-test_data = tf.data.Dataset.load(data_paths["spectrograms"]["test"])
+train_data = tf.data.Dataset.load(data_paths["spectrograms"]["train"]).take(5)
+test_data = tf.data.Dataset.load(data_paths["spectrograms"]["test"]).take(5)
 
 # Obtain references to the vector datasets. TODO: remove 
-test_vecs = tf.data.Dataset.load(data_paths["vectors"]["test"])
-train_vecs = tf.data.Dataset.load(data_paths["vectors"]["train"])
+test_vecs = tf.data.Dataset.load(data_paths["vectors"]["test"]).take(5)
+train_vecs = tf.data.Dataset.load(data_paths["vectors"]["train"]).take(5)
 
 for mixedvec, cleanvec in train_vecs.take(1):
     spectutils.save_numpy_as_wav(mixedvec, "./example_mixed.wav")
@@ -28,3 +28,4 @@ unetbuilder = OurUNet()
 unet = unetbuilder.build_model(modelspec=model_spec)
 unet.compile(optimizer="adam", loss="mse", metrics=["accuracy", "mae"])
 unet.fit(train_data, validation_data=test_data, epochs=1, batch_size=1, shuffle=True)
+unet.summary()
