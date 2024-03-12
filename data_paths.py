@@ -6,8 +6,8 @@ data_config = {
         "sample_rate" : 16000,
         "hop_length" : 256,
         "noise_level" : 0.1,
-        "frame_length" : 512 * 4,
-        "fft_length" : 512 * 4,
+        "frame_length" : 256 * 4,
+        "fft_length" : 256 * 4,
         "clean_vec_repeats" : 1
 }
 
