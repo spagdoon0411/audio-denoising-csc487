@@ -5,13 +5,6 @@ import sys
 import os
 from data_paths import data_paths, data_config
 
-# Options
-sample_rate = 16000
-hop_length = 256
-noise_level = 0.1
-clean_vec_repeats = 1
-USING_DB = False
-
 # Util object for data preprocessing
 data = AudioData(clean_audio_path=data_paths["clean"]["train"],
                  clean_audio_test_path=data_paths["clean"]["test"],

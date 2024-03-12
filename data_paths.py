@@ -8,7 +8,7 @@ data_config = {
         "noise_level" : 0.1,
         "frame_length" : 512 * 4,
         "fft_length" : 512 * 4,
-        "clean_vec_repeats" : 2
+        "clean_vec_repeats" : 1
 }
 
 folder_path = os.path.join(data_config["data_folder_path"], data_config["folder_name"])
