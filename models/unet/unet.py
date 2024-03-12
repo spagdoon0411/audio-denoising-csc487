@@ -165,12 +165,19 @@ class OurUNet:
             padding=convtspec["padding"],
         )(input_layer)
 
-        resized_downsample_conv_layer = tf.image.resize(images = downsample_conv_layer,
-                                                        size = tf.shape(convt)[1:3],
-                                                        method=tf.image.ResizeMethod.BILINEAR, 
-                                                        preserve_aspect_ratio=False)
+        resized_convt_layer = tf.image.resize(images = convt,
+                                             size = tf.shape(downsample_conv_layer)[1:3],
+                                             method=tf.image.ResizeMethod.BILINEAR, 
+                                             preserve_aspect_ratio=False)
+        concat = concatenate([resized_convt_layer, downsample_conv_layer])
 
-        concat = concatenate([convt, resized_downsample_conv_layer])
+       #  resized_downsample_conv_layer = tf.image.resize(images = downsample_conv_layer,
+       #                                                  size = tf.shape(convt)[1:3],
+       #                                                  method=tf.image.ResizeMethod.BILINEAR, 
+       #                                                  preserve_aspect_ratio=False)
+
+
+        # concat = concatenate([convt, resized_downsample_conv_layer])
 
         norm = BatchNormalization()(concat)
 
