@@ -64,9 +64,19 @@ def power_to_db(S, amin=1e-16, top_db=80.0):
 
 print("Mapping decibel spectrogram conversion over dataset... ")
 
+@tf.function
 def compose_preprocessing_steps(tens):
     tens1 = tf.expand_dims(power_to_db(tf.abs(tensor_spectrogram_from_tensor_audio(tens))), axis=-1)
-    return tens1
+
+    min = tf.math.reduce_min(tens)
+    max = tf.math.reduce_max(tens)
+    shape = tf.shape(tens)
+    ones = tf.ones(shape)
+
+    zero_one_tens = (tens1 - (min * ones)) / (max - min) 
+    normalized_tens = 2 * (zero_one_tens - (0.5 * ones))
+
+    return normalized_tens
 
 
 # Dataset of training mixed-clean spectrogram pairs 
