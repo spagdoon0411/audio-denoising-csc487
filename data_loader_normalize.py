@@ -56,7 +56,7 @@ def compose_preprocessing_steps(tens):
 print("Mapping decibel spectrogram conversion over dataset... ")
 
 # Dataset of training mixed-clean spectrogram pairs 
-train_spects: tf.data.Dataset = data.clean_mixed_vectors_train_dataset.take(1000).map(
+train_spects: tf.data.Dataset = data.clean_mixed_vectors_train_dataset.map(
     lambda tens1, tens2: (compose_preprocessing_steps(tens1), compose_preprocessing_steps(tens2)),
     num_parallel_calls=tf.data.AUTOTUNE,
     deterministic=False,
@@ -64,7 +64,7 @@ train_spects: tf.data.Dataset = data.clean_mixed_vectors_train_dataset.take(1000
 )
 
 # Dataset of testing mixed-clean spectrogram pairs
-test_spects: tf.data.Dataset = data.clean_mixed_vectors_test_dataset.take(100).map(
+test_spects: tf.data.Dataset = data.clean_mixed_vectors_test_dataset.map(
     lambda tens1, tens2: (compose_preprocessing_steps(tens1), compose_preprocessing_steps(tens2)),
     num_parallel_calls=tf.data.AUTOTUNE,
     deterministic=False,
