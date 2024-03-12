@@ -121,7 +121,7 @@ model_spec = {
         },
         "upsampling2" : { 
             "convt" : {
-                "filters" : 128,
+                "filters" : 64,
                 "kernel_size" : (2,2),
                 "strides" : (2, 2),
                 "padding" : "same"
@@ -129,7 +129,7 @@ model_spec = {
         },
         "upsampling3" : { 
             "convt" : {
-                "filters" : 128,
+                "filters" : 32,
                 "kernel_size" : (2,2),
                 "strides" : (2, 2),
                 "padding" : "same"
@@ -137,7 +137,7 @@ model_spec = {
         },
         "upsampling4" : { 
             "convt" : {
-                "filters" : 128,
+                "filters" : 16,
                 "kernel_size" : (2,2),
                 "strides" : (2, 2),
                 "padding" : "same"
