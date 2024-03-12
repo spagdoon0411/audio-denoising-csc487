@@ -3,11 +3,15 @@ import tensorflow as tf
 from data_paths import data_paths
 from models.unet.test_unet_spec import model_spec
 from models.unet.unet import OurUNet
-from data_loader_normalize import data 
+from data_paths import data_config
+from utils.spectrogram_utils import SpectUtils
+from keras.api._v2.keras.utils import plot_model
 
-# Use the same spectrogram utility class as the one that was used to
-# process audio files; it has a record of the STFT paramters.
-spectutils = data.spectutils
+
+spectutils = SpectUtils(sampling_rate=data_config["sample_rate"],
+                        hop_length=data_config["hop_length"],
+                        frame_length=data_config["frame_length"],
+                        fft_length=data_config["fft_length"])
 
 # Obtain references to spectrogram datasets
 train_data = tf.data.Dataset.load(data_paths["spectrograms"]["train"]).take(5)
@@ -29,3 +33,4 @@ unet = unetbuilder.build_model(modelspec=model_spec)
 unet.compile(optimizer="adam", loss="mse", metrics=["accuracy", "mae"])
 unet.fit(train_data, validation_data=test_data, epochs=1, batch_size=1, shuffle=True)
 unet.summary()
+plot_model(unet, to_file="unet_plot.png", show_shapes=True, show_layer_names=True)
