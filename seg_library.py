@@ -2,14 +2,13 @@ import segmentation_models.segmentation_models as sm
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
-from segmentation_models import Unet
 from keras.layers import Input, Conv2D
 from keras.models import Model
 from data_paths import data_paths
 
 
-base_model = Unet()
-base_model = Unet(backbone_name='resnet101', encoder_weights='imagenet')
+base_model = sm.Unet()
+base_model = sm.Unet(backbone_name='resnet101', encoder_weights='imagenet')
 
 N = 1
 
