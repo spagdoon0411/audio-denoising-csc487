@@ -22,6 +22,6 @@ train_data=train_data.batch(1)
 
 unetbuilder = OurUNet()
 unet = unetbuilder.build_model(modelspec=model_spec)
-unet.compile(optimizer='adam', loss="mse", metrics=["accuracy"])
+unet.compile(optimizer='adam', loss="mse", metrics=["accuracy", "mae"])
 unet.fit(train_data, validation_data=test_data, epochs=1, batch_size=1, shuffle=True)
 

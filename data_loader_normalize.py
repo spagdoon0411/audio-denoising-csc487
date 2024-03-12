@@ -4,6 +4,8 @@ import tensorflow as tf
 import sys
 import os
 from data_paths import data_paths, data_config
+import tensorflow as tf
+
 
 USING_DB = True
 
@@ -31,6 +33,7 @@ def tensor_spectrogram_from_tensor_audio(tens):
         window_fn=tf.signal.hann_window,
     )
 
+notify_boolean = True
 
 def power_to_db(S, amin=1e-16, top_db=80.0):
     """Convert a power-spectrogram (magnitude squared) to decibel (dB) units.
@@ -42,6 +45,10 @@ def power_to_db(S, amin=1e-16, top_db=80.0):
     
     if(not USING_DB):
         return S
+    
+    if(notify_boolean):
+        print("Using dB spectrograms!")
+        notify_boolean = False
 
     def _tf_log10(x):
         numerator = tf.math.log(x)
@@ -61,13 +68,14 @@ def power_to_db(S, amin=1e-16, top_db=80.0):
 
 print("Mapping decibel spectrogram conversion over dataset... ")
 
+def compose_preprocessing_steps(tens):
+    tens1 = tf.expand_dims(power_to_db(tf.abs(tensor_spectrogram_from_tensor_audio(tens))), axis=-1)
+    return tens1
+
 
 # Dataset of training mixed-clean spectrogram pairs 
 train_spects: tf.data.Dataset = data.clean_mixed_vectors_train_dataset.map(
-    lambda tens1, tens2: (
-        tf.expand_dims(power_to_db(tf.abs(tensor_spectrogram_from_tensor_audio(tens1))), axis=-1),
-        tf.expand_dims(power_to_db(tf.abs(tensor_spectrogram_from_tensor_audio(tens2))), axis=-1),
-    ),
+    lambda tens1, tens2: (compose_preprocessing_steps(tens1), compose_preprocessing_steps(tens2)),
     num_parallel_calls=tf.data.AUTOTUNE,
     deterministic=False,
     name="vecstospecttensors"
@@ -75,10 +83,7 @@ train_spects: tf.data.Dataset = data.clean_mixed_vectors_train_dataset.map(
 
 # Dataset of testing mixed-clean spectrogram pairs
 test_spects: tf.data.Dataset = data.clean_mixed_vectors_test_dataset.map(
-    lambda tens1, tens2: (
-        tf.expand_dims(power_to_db(tf.abs(tensor_spectrogram_from_tensor_audio(tens1))), axis=-1),
-        tf.expand_dims(power_to_db(tf.abs(tensor_spectrogram_from_tensor_audio(tens2))), axis=-1),
-    ),
+    lambda tens1, tens2: (compose_preprocessing_steps(tens1), compose_preprocessing_steps(tens2)),
     num_parallel_calls=tf.data.AUTOTUNE,
     deterministic=False,
     name="vecstospecttensors"
@@ -99,9 +104,4 @@ train_spects.save(path=data_paths["spectrograms"]["train"])
 test_spects.save(path=data_paths["spectrograms"]["test"])
 
 print("Done processing data!")
-
-# For determining whether vectors are in correct mixed, clean orientation
-for vec1, vec2 in data.clean_mixed_vectors_train_dataset.take(1):
-    data.spectutils.save_numpy_as_wav(vec1, "./first_example.wav")
-    data.spectutils.save_numpy_as_wav(vec2, "./second_example.wav")
 
