@@ -53,7 +53,7 @@ epochs = int(sys.argv[3])
 unetbuilder = OurUNet()
 unet = unetbuilder.build_model(modelspec=model_spec)
 unet.compile(optimizer="adam", loss="mse", metrics=["mse", "mae", "val_mse", "val_mae"])
-unet.fit(train_data, validation_data=test_data, epochs=epochs, batch_size=1, shuffle=True, callbacks=[earlystop, history, cp_callback])
+unet.fit(train_data, validation_data=test_data, epochs=1, batch_size=1, shuffle=True, callbacks=[earlystop, history, cp_callback])
 
 history_path = sys.argv[1]
 with open(history_path, 'wb') as file_pi:
