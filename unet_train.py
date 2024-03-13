@@ -19,7 +19,7 @@ spectutils = SpectUtils(sampling_rate=data_config["sample_rate"],
 earlystop = tf.keras.callbacks.EarlyStopping(
     monitor="val_loss",
     min_delta=0,
-    patience=1,
+    patience=0,
     verbose=1,
     mode="auto",
     baseline=None,
