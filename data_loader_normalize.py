@@ -4,6 +4,7 @@ from data_paths import data_paths, data_config
 import tensorflow as tf
 
 USING_DB = True
+NORMALIZE = False
 
 # Util object for data preprocessing
 data = AudioData(clean_audio_path=data_paths["clean"]["train"],
@@ -33,6 +34,10 @@ def compose_preprocessing_steps(tens):
         spectutils.power_to_db(tf.abs(spectutils.tensor_spectrogram_from_tensor_audio(tens))),
         axis=-1,
     )
+
+    if(not NORMALIZE):
+        return tens1
+
     min = tf.math.reduce_min(tens1)
     max = tf.math.reduce_max(tens1)
     shape = tf.shape(tens1)
