@@ -35,8 +35,8 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=model_path,
                                                  verbose=1)
 
 # Obtain references to spectrogram datasets
-train_data = tf.data.Dataset.load(data_paths["spectrograms"]["train"])
-test_data = tf.data.Dataset.load(data_paths["spectrograms"]["test"])
+train_data = tf.data.Dataset.load(data_paths["spectrograms"]["train"]).prefetch(tf.data.AUTOTUNE)
+test_data = tf.data.Dataset.load(data_paths["spectrograms"]["test"]).prefetch(tf.data.AUTOTUNE)
 
 # Obtain references to the vector datasets. TODO: remove 
 test_vecs = tf.data.Dataset.load(data_paths["vectors"]["test"])
