@@ -22,11 +22,11 @@ def _db_to_amp_tensorflow(x):
 
 class STFTLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config):
-        super.__init__()
+        super(STFTLayer, self).__init__()
         self.stft_config = stft_config
 
     def call(self, inputs, *args, **kwargs):
-        super.__call__(args, kwargs) # TODO: correct?
+        # super.__call__(args, kwargs) # TODO: correct?
 
         output = tf.signal.stft(
             inputs,
@@ -41,11 +41,11 @@ class STFTLayer(tf.keras.layers.Layer):
 
 class ISTFTLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config):
-        super.__init__()
+        super(ISTFTLayer, self).__init__()
         self.stft_config = stft_config
     
     def call(self, inputs, *args, **kwargs):
-        super.__call__(args, kwargs) # TODO: correct?
+        # super.__call__(args, kwargs) # TODO: correct?
 
         output = tf.signal.inverse_stft(
             inputs,
@@ -59,12 +59,12 @@ class ISTFTLayer(tf.keras.layers.Layer):
 
 class AmpDbSpectLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config, dB = False):
-        super.__init__()
+        super(AmpDbSpectLayer, self).__init__()
         self.stft_config = stft_config
         self.dB = dB
     
     def call(self, inputs, *args, **kwargs):
-        super.__call__(args, kwargs) # TODO: correct?
+        # super.__call__(args, kwargs) # TODO: correct?
 
         output = tf.signal.stft(
             inputs,
@@ -83,14 +83,14 @@ class AmpDbSpectLayer(tf.keras.layers.Layer):
 
 class AmpDbToAudioLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config, dB = False, halve = False, iters = 30):
-        super.__init__()
+        super(AmpDbToAudioLayer, self).__init__()
         self.stft_config = stft_config
         self.dB = dB
         self.iters = iters
         self.halve = halve
     
     def call(self, inputs, *args, **kwargs):
-        super.__call__(args, kwargs) # TODO: correct?
+        # super.__call__(args, kwargs) # TODO: correct?
 
         if(self.dB):
             inputs = _db_to_amp_tensorflow(inputs)
