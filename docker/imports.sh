@@ -1,1 +1,1 @@
-pip install tensorflow tensorflow_datasets librosa jaxtyping matplotlib
+pip install tensorflow tensorflow_datasets librosa jaxtyping matplotlib tensorflow_io
