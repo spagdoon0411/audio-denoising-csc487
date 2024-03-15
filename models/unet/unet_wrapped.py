@@ -132,7 +132,7 @@ class OurUNet:
         # The input layer should accept vectors of variable length. 
         # The way to do this in Keras is to set dimensions of the 
         # shape to None.
-        self.inputlayer = Input(shape=(None, ), batch_size=None)
+        self.inputlayer = Input(shape=(None, ), batch_size=1)
 
         # The most recent layer produced was the input layer. This 
         # reference is here for convenience (just like linked list 
