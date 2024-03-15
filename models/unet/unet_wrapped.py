@@ -22,7 +22,7 @@ def _db_to_amp_tensorflow(x):
 
 class STFTLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config):
-        super.__init__(self)
+        super.__init__()
         self.stft_config = stft_config
 
     def call(self, inputs, *args, **kwargs):
@@ -41,7 +41,7 @@ class STFTLayer(tf.keras.layers.Layer):
 
 class ISTFTLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config):
-        super.__init__(self)
+        super.__init__()
         self.stft_config = stft_config
     
     def call(self, inputs, *args, **kwargs):
@@ -59,7 +59,7 @@ class ISTFTLayer(tf.keras.layers.Layer):
 
 class AmpDbSpectLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config, dB = False):
-        super.__init__(self)
+        super.__init__()
         self.stft_config = stft_config
         self.dB = dB
     
@@ -83,7 +83,7 @@ class AmpDbSpectLayer(tf.keras.layers.Layer):
 
 class AmpDbToAudioLayer(tf.keras.layers.Layer):
     def __init__(self, stft_config, dB = False, halve = False, iters = 30):
-        super.__init__(self)
+        super.__init__()
         self.stft_config = stft_config
         self.dB = dB
         self.iters = iters
