@@ -1,2 +1,3 @@
-pip install tensorflow tensorflow_datasets librosa jaxtyping matplotlib
-python data_loader_normalize.py 
+bash import.sh
+bash process_data.sh
+python amp_train.py ./research_notes/histories/amp_train ./research_notes/models/amp_train $1
