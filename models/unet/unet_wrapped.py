@@ -143,9 +143,9 @@ class OurUNet:
             last_layer = AmpDbSpectLayer(
                 stft_config=stft_config, 
                 dB=True
-            )
+            )(last_layer)
         elif(type == "COMP"):
-            last_layer = STFTLayer(stft_config=stft_config)
+            last_layer = STFTLayer(stft_config=stft_config)(last_layer)
         else:
             raise Exception(f"{type} is not a valid model type. Choose from AMP or COMP.")
 
@@ -212,11 +212,11 @@ class OurUNet:
                 dB=True,
                 halve=False,
                 iters=30
-            )
+            )(last_layer)
         elif(type == "COMP"):
             self.outputlayer = ISTFTLayer(
                 stft_config=stft_config
-            )
+            )(last_layer)
 
         return Model(inputs=[self.inputlayer], outputs=[self.outputlayer])
 
