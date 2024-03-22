@@ -18,7 +18,7 @@ data = AudioData(clean_audio_path=data_paths["clean"]["train"],
                  frame_length=data_config["frame_length"],
                  fft_length=data_config["fft_length"])
 
-# Use the same SpectUtils instance that's in the AudioData object above; it's contains
+# Use the same SpectUtils instance that's in the AudioData object above; it contains
 # all of the STFT parameters.
 spectutils = data.spectutils
 
