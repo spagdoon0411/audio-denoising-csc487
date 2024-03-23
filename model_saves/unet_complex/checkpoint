@@ -1,2 +1,2 @@
-model_checkpoint_path: "unet_complex"
-all_model_checkpoint_paths: "unet_complex"
+model_checkpoint_path: "unet_complex_2"
+all_model_checkpoint_paths: "unet_complex_2"
