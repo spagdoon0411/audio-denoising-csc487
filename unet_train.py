@@ -26,6 +26,7 @@ earlystop = tf.keras.callbacks.EarlyStopping(
     start_from_epoch=0,
 )
 
+
 history = tf.keras.callbacks.History()
 
 model_path = sys.argv[1]
@@ -48,12 +49,23 @@ train_vecs = tf.data.Dataset.load(data_paths["vectors"]["train"])
 test_data = test_data.batch(1)
 train_data = train_data.batch(1)
 
-epochs = int(sys.argv[2])
+optimizer = tf.keras.optimizers.Adam(
+    learning_rate=0.0001
+)
+
+epochs = int(sys.argv[3])
 unetbuilder = OurUNet()
 unet = unetbuilder.build_model(modelspec=model_spec)
-unet.compile(optimizer="adam", loss="mse", metrics=["mse", "mae"])
-unet.fit(train_data, validation_data=test_data, epochs=1, batch_size=1, shuffle=True, callbacks=[earlystop, history, cp_callback])
+unet.compile(optimizer=optimizer, loss="mse", metrics=["mse", "mae"])
+unet.fit(
+    train_data, 
+    validation_data=test_data, 
+    epochs=epochs, 
+    batch_size=1, 
+    shuffle=True, 
+    callbacks=[earlystop, history, cp_callback]
+)
 
-# history_path = sys.argv[1]
-# with open(history_path, 'wb') as file_pi:
-#     pickle.dump(history.history, file_pi)
+history_path = sys.argv[2]
+with open(history_path, 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
