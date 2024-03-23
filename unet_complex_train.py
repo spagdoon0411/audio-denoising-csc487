@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from data_paths import data_paths
-from models.unet.test_unet_spec import model_spec
+from models.unet.complex_unet_spec import model_spec
 from models.unet.unet_complex import OurUNet
 from data_paths import data_config
 from utils.spectrogram_utils import SpectUtils
@@ -50,7 +50,7 @@ test_data = test_data.batch(1)
 train_data = train_data.batch(1)
 
 optimizer = tf.keras.optimizers.Adam(
-    learning_rate=0.0001
+    learning_rate=0.001
 )
 
 epochs = int(sys.argv[3])
