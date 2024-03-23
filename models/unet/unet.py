@@ -3,6 +3,7 @@ from keras.api._v2.keras.layers import (BatchNormalization, Conv2D,
                                         Conv2DTranspose, Dropout, Input,
                                         MaxPooling2D, ReLU, concatenate)
 
+import tensorflow as tf
 
 class OurUNet:
     # Takes a model specification dictionary that matches the UNet 
@@ -15,7 +16,7 @@ class OurUNet:
         # The input layer should accept images of variable size. 
         # The way to do this in Keras is to set dimensions of the 
         # shape to None.
-        self.inputlayer = Input(shape=(None, None, 3), batch_size=None)
+        self.inputlayer = Input(shape=(None, None, 1), batch_size=None)
 
         # The most recent layer produced was the input layer. This 
         # reference is here for convenience (just like linked list 
@@ -154,6 +155,7 @@ class OurUNet:
     def make_upsampling_layer(
         self, input_layer, downsample_conv_layer, upsample_spec: dict
     ):
+
         convtspec = upsample_spec["convt"]
 
         convt = Conv2DTranspose(
@@ -163,7 +165,19 @@ class OurUNet:
             padding=convtspec["padding"],
         )(input_layer)
 
-        concat = concatenate([convt, downsample_conv_layer])
+        resized_convt_layer = tf.image.resize(images = convt,
+                                             size = tf.shape(downsample_conv_layer)[1:3],
+                                             method=tf.image.ResizeMethod.BILINEAR, 
+                                             preserve_aspect_ratio=False)
+        concat = concatenate([resized_convt_layer, downsample_conv_layer])
+
+       #  resized_downsample_conv_layer = tf.image.resize(images = downsample_conv_layer,
+       #                                                  size = tf.shape(convt)[1:3],
+       #                                                  method=tf.image.ResizeMethod.BILINEAR, 
+       #                                                  preserve_aspect_ratio=False)
+
+
+        # concat = concatenate([convt, resized_downsample_conv_layer])
 
         norm = BatchNormalization()(concat)
 
