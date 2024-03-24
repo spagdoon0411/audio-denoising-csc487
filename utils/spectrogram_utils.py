@@ -88,8 +88,6 @@ class SpectUtils:
 
     # Stores numpy audio as a playable wav file
     def save_numpy_as_wav(self, vec: AudioVector, path: str) -> None:
-        # TODO: this write method has a subtype argument. What should I use?
-        # TODO: potentially dangerous type: ignore
         numpy_vec = vec if isinstance(vec, np.ndarray) else vec.numpy()  # type: ignore
         sf.write(file=path, data=numpy_vec, samplerate=self.sampling_rate)
 
